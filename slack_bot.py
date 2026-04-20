@@ -1,0 +1,98 @@
+import os
+import logging
+from slack_sdk import WebClient
+from slack_sdk.errors import SlackApiError
+from typing import Dict, Any
+
+logger = logging.getLogger(__name__)
+
+class SlackBot:
+    def __init__(self, token: str, channel_id: str):
+        """
+        Slack API 클라이언트와 채널 ID 초기화
+        """
+        self.client = WebClient(token=token)
+        self.channel_id = channel_id
+
+    def build_menu_blocks(self, menu_data: Dict[str, str]) -> list:
+        """
+        메뉴 텍스트와 이미지 URL을 Slack Block Kit 형식으로 변환합니다.
+        """
+        menu_text = menu_data.get("menu_text", "오늘의 메뉴를 불러올 수 없습니다.")
+        image_url = menu_data.get("image_url")
+
+        blocks = [
+            {
+                "type": "header",
+                "text": {
+                    "type": "plain_text",
+                    "text": "🍽️ 오늘의 카페테리아 메뉴 🍽️",
+                    "emoji": True
+                }
+            },
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": f"*오늘도 맛있는 점심 식사 하세요!*\n\n{menu_text}"
+                }
+            }
+        ]
+
+        # 이미지 URL이 존재하면 이미지 블록 추가
+        if image_url:
+            blocks.append(
+                {
+                    "type": "image",
+                    "image_url": image_url,
+                    "alt_text": "오늘의 메뉴 사진"
+                }
+            )
+
+        blocks.append(
+            {
+                "type": "context",
+                "elements": [
+                    {
+                        "type": "mrkdwn",
+                        "text": "봇에서 자동으로 전송하는 메시지입니다."
+                    }
+                ]
+            }
+        )
+
+        return blocks
+
+    def send_menu_message(self, menu_data: Dict[str, str]) -> bool:
+        """
+        Slack 채널에 Block Kit 메시지를 전송합니다.
+        """
+        blocks = self.build_menu_blocks(menu_data)
+        
+        try:
+            response = self.client.chat_postMessage(
+                channel=self.channel_id,
+                blocks=blocks,
+                text="오늘의 카페테리아 메뉴가 도착했습니다!" # Fallback text
+            )
+            logger.info(f"메시지 전송 성공: {response['ts']}")
+            return True
+        except SlackApiError as e:
+            logger.error(f"Slack API 에러 발생: {e.response['error']}")
+            return False
+
+if __name__ == "__main__":
+    # 간단한 테스트
+    logging.basicConfig(level=logging.INFO)
+    dummy_token = os.environ.get("SLACK_BOT_TOKEN", "xoxb-dummy")
+    dummy_channel = os.environ.get("SLACK_CHANNEL_ID", "C_DUMMY")
+    
+    bot = SlackBot(dummy_token, dummy_channel)
+    test_data = {
+        "menu_text": "현미밥, 김치찌개, 계란말이",
+        "image_url": "https://images.unsplash.com/photo-1547592166-23ac45744acd?q=80&w=800&auto=format&fit=crop"
+    }
+    
+    # 실제 토큰 없이는 에러가 발생하므로 주석 처리
+    # bot.send_menu_message(test_data)
+    print("Block Kit JSON:", bot.build_menu_blocks(test_data))
