@@ -1,0 +1,30 @@
+---
+description: Keep docs/development-history.md in sync when dev/project version bumps
+alwaysApply: true
+---
+
+# Development version history
+
+When you or the user **bumps the project development version** (or introduces the first version) in any primary source of truth, update **`docs/development-history.md`** in the same change (or immediately after, in the same task).
+
+## What counts as a “version bump”
+
+Treat any intentional change to the canonical app/package version as a bump, for example:
+
+- `version` in `package.json`
+- `version` in `pyproject.toml` or `[project]` / `[tool.poetry]`
+- `version` in `Cargo.toml`
+- A top-level `VERSION` file or similar single-source file the project uses
+
+If the repo has **no** version file yet and you add one, add a matching **`## x.y.z — YYYY-MM-DD`** section for that initial version.
+
+## Document rules
+
+1. **File path**: always `docs/development-history.md` (create `docs/` if missing).
+2. **Section order**: newest version **first**, below the “Format” / intro block if present.
+3. **Heading**: `## x.y.z — YYYY-MM-DD` using the **new** version string and today’s date (ISO `YYYY-MM-DD`).
+4. **Body**: 1–5 short bullets describing *why* the bump happened (features merged, breaking dev changes, milestone). English is fine; match the language of the rest of the doc if it is already non-English.
+5. **Unreleased**: remove or shrink placeholder text under `## Unreleased` once real entries exist; use `## Unreleased` only for work not yet tied to a version if the project uses that pattern.
+6. Do **not** duplicate full git history—only **version-level** notes.
+
+If only a **patch** bump with no meaningful note, still add the section with a single bullet (e.g. “Patch bump; no functional change.”).
