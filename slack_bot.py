@@ -63,22 +63,91 @@ class SlackBot:
 
         return blocks
 
+    def _slack_error_detail_text(self, response: Dict[str, Any]) -> str:
+        parts = []
+        errs = response.get("errors")
+        if isinstance(errs, list):
+            parts.extend(errs)
+        elif errs:
+            parts.append(str(errs))
+        meta = response.get("response_metadata") or {}
+        msgs = meta.get("messages")
+        if isinstance(msgs, list):
+            parts.extend(msgs)
+        elif msgs:
+            parts.append(str(msgs))
+        return " ".join(parts).lower()
+
     def send_menu_message(self, menu_data: Dict[str, str]) -> bool:
         """
         Slack 채널에 Block Kit 메시지를 전송합니다.
+        image_url을 Slack 서버가 가져오지 못하면 invalid_blocks가 나므로, 이미지 없이 한 번 더 시도합니다.
         """
         blocks = self.build_menu_blocks(menu_data)
-        
+        fallback_text = "오늘의 카페테리아 메뉴가 도착했습니다!"
+
         try:
             response = self.client.chat_postMessage(
                 channel=self.channel_id,
                 blocks=blocks,
-                text="오늘의 카페테리아 메뉴가 도착했습니다!" # Fallback text
+                text=fallback_text,
             )
             logger.info(f"메시지 전송 성공: {response['ts']}")
             return True
         except SlackApiError as e:
-            logger.error(f"Slack API 에러 발생: {e.response['error']}")
+            resp = e.response
+            error_code = resp.get("error")
+            detail = self._slack_error_detail_text(resp)
+            image_fail = (
+                error_code == "invalid_blocks"
+                and bool(menu_data.get("image_url"))
+                and "downloading image failed" in detail
+            )
+            if image_fail:
+                logger.warning(
+                    "Slack이 image_url에서 이미지를 받지 못했습니다. 이미지 블록 없이 다시 전송합니다."
+                )
+                # #region agent log
+                import json
+                import time
+
+                try:
+                    with open(
+                        "/home/david/workspace/Slack-ChatBot/.cursor/debug-1bd0d9.log",
+                        "a",
+                        encoding="utf-8",
+                    ) as f:
+                        f.write(
+                            json.dumps(
+                                {
+                                    "sessionId": "1bd0d9",
+                                    "runId": "post-fix",
+                                    "hypothesisId": "IMG",
+                                    "location": "slack_bot.py:send_menu_message",
+                                    "message": "Retry without image block",
+                                    "data": {"error": error_code},
+                                    "timestamp": int(time.time() * 1000),
+                                }
+                            )
+                            + "\n"
+                        )
+                except OSError:
+                    pass
+                # #endregion
+                retry_blocks = self.build_menu_blocks({**menu_data, "image_url": None})
+                try:
+                    response = self.client.chat_postMessage(
+                        channel=self.channel_id,
+                        blocks=retry_blocks,
+                        text=fallback_text,
+                    )
+                    logger.info(f"메시지 전송 성공(이미지 제외): {response['ts']}")
+                    return True
+                except SlackApiError as e2:
+                    logger.error(f"Slack API 에러 발생: {e2.response.get('error')}")
+                    return False
+
+            logger.error(f"Slack API 에러 발생: {error_code}")
             return False
 
 if __name__ == "__main__":

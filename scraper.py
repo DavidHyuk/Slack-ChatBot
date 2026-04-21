@@ -33,7 +33,6 @@ def get_todays_menu(url: str) -> Optional[Dict[str, str]]:
             logger.warning("메뉴 요소를 찾을 수 없습니다. (class='site-panel__daypart-wrapper')")
             return {
                 "menu_text": "오늘의 메뉴를 불러올 수 없습니다.",
-                "image_url": "https://images.unsplash.com/photo-1547592166-23ac45744acd?q=80&w=800&auto=format&fit=crop"
             }
             
         menu_items = []
@@ -86,12 +85,10 @@ def get_todays_menu(url: str) -> Optional[Dict[str, str]]:
         else:
             menu_text = "\n\n".join(menu_items)
             
-        # 해당 사이트는 개별 음식 사진이 목록에 노출되지 않으므로 고정 이미지나 None 사용
-        image_url = "https://images.unsplash.com/photo-1498837167922-41c46b66c07a?q=80&w=800&auto=format&fit=crop"
-        
+        # 해당 사이트는 목록에 직접 이미지 URL이 없음. Slack image 블록은 공개 HTTPS에서
+        # Slack 서버가 직접 다운로드 가능한 URL만 허용되므로, 플레이스홀더 외부 URL은 넣지 않음.
         return {
             "menu_text": menu_text,
-            "image_url": image_url
         }
         
     except requests.RequestException as e:
