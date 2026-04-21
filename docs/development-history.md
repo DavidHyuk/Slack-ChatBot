@@ -16,6 +16,11 @@ Each bump is one section, newest first.
 
 ---
 
+## 0.3.0 — 2026-04-21
+
+- `TARGET_URL` supports `{date}` (default `MENU_DATE_TZ` / `America/Los_Angeles`) for Bon Appétit `/cafe/YYYY-MM-DD/` URLs.
+- Scheduled Actions: dual UTC cron with local 8am window guard; `workflow_dispatch` bypasses the window.
+
 ## 0.2.0 — 2026-04-21
 
 - GitHub Actions: `daily-menu.yml` runs once per day by default (02:00 UTC); added `menu-bot-frequent-schedule.yml` for manual runs and optional every-minute `cron` (commented until enabled for testing).

@@ -2,8 +2,8 @@ name: Daily Cafeteria Menu SlackBot
 
 on:
   schedule:
-    # 매일 KST 오전 11시 (UTC 02:00). 분 시 일 월 요일
-    - cron: '0 2 * * *'
+    # America/Los_Angeles 오전 8시: PDT→15:xx UTC, PST→16:xx UTC. 두 번 돌린 뒤 main에서 해당 타임존 8시만 실제 전송.
+    - cron: '5 15,16 * * *'
 
   workflow_dispatch:
 
@@ -38,5 +38,9 @@ jobs:
           TARGET_URL: ${{ secrets.TARGET_URL }}
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+          ENFORCE_LOCAL_NOTIFY_WINDOW: "1"
+          MENU_NOTIFY_TZ: America/Los_Angeles
+          MENU_NOTIFY_HOUR: "8"
+          MENU_DATE_TZ: America/Los_Angeles
         run: |
           python main.py

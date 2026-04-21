@@ -1,8 +1,9 @@
 import os
 import sys
 import logging
-import json
-import time
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
 from dotenv import load_dotenv
 from scraper import get_todays_menu
 from slack_bot import SlackBot
@@ -14,23 +15,72 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+
+def _menu_date_tz_name() -> str:
+    return os.environ.get(
+        "MENU_DATE_TZ",
+        os.environ.get("MENU_NOTIFY_TZ", "America/Los_Angeles"),
+    )
+
+
+def resolve_target_url(raw: str) -> str:
+    """If TARGET_URL contains ``{date}``, substitute YYYY-MM-DD in MENU_DATE_TZ."""
+    if "{date}" in raw:
+        d = datetime.now(ZoneInfo(_menu_date_tz_name())).date().isoformat()
+        return raw.replace("{date}", d)
+    return raw
+
+
+def should_skip_outside_notify_window() -> bool:
+    """
+    When ENFORCE_LOCAL_NOTIFY_WINDOW is set, skip unless local clock hour
+    matches MENU_NOTIFY_HOUR (used with two UTC crons for DST-safe 8am PT).
+    """
+    flag = os.environ.get("ENFORCE_LOCAL_NOTIFY_WINDOW", "").strip().lower()
+    if flag not in ("1", "true", "yes"):
+        return False
+    # Actions 수동 실행은 언제든 전체 플로우 실행
+    if os.environ.get("GITHUB_EVENT_NAME") == "workflow_dispatch":
+        return False
+    tz_name = os.environ.get("MENU_NOTIFY_TZ", "America/Los_Angeles")
+    try:
+        hour_target = int(os.environ.get("MENU_NOTIFY_HOUR", "8"))
+    except ValueError:
+        hour_target = 8
+    now = datetime.now(ZoneInfo(tz_name))
+    return now.hour != hour_target
+
+
 def main():
     # 환경 변수 로드 (.env 파일이 있다면 로드됨)
     load_dotenv()
-    
+
+    if should_skip_outside_notify_window():
+        tz = os.environ.get("MENU_NOTIFY_TZ", "America/Los_Angeles")
+        hr = os.environ.get("MENU_NOTIFY_HOUR", "8")
+        logger.info(
+            "로컬 알림 시간이 아니어서 건너뜁니다 (timezone=%s, 대상 시각=%s시).",
+            tz,
+            hr,
+        )
+        sys.exit(0)
+
     # 환경 변수 확인
-    target_url = os.environ.get("TARGET_URL")
+    raw_url = os.environ.get("TARGET_URL")
     slack_token = os.environ.get("SLACK_BOT_TOKEN")
     slack_channel = os.environ.get("SLACK_CHANNEL_ID")
-    
-    if not target_url:
+
+    if not raw_url:
         logger.error("TARGET_URL 환경 변수가 설정되지 않았습니다.")
         sys.exit(1)
-        
+
+    target_url = resolve_target_url(raw_url.strip())
+    logger.info("요청 URL: %s", target_url)
+
     if not slack_token or not slack_channel:
         logger.error("SLACK_BOT_TOKEN 또는 SLACK_CHANNEL_ID 환경 변수가 설정되지 않았습니다.")
         sys.exit(1)
-        
+
     logger.info("카페테리아 메뉴 스크래핑을 시작합니다...")
     menu_data = get_todays_menu(target_url)
     
