@@ -8,9 +8,6 @@ logger = logging.getLogger(__name__)
 
 _WS_RE = re.compile(r"\s+")
 
-# 평문 menu_text / 복사용으로 식당 블록 앞에 넣는 구분선 (slack_bot 과 동일 길이)
-_MENU_TEXT_STATION_RULE = "-" * 40
-
 def _clean_text(s: str) -> str:
     return _WS_RE.sub(" ", (s or "").strip())
 
@@ -140,8 +137,6 @@ def get_todays_menu(url: str) -> Optional[Dict[str, Any]]:
                 raw_items = by_station[st]
                 items_out: List[Dict[str, str]] = []
                 icon = _station_emoji(st)
-                lines.append(_MENU_TEXT_STATION_RULE)
-                lines.append("")
                 lines.append(f"{icon} *{st}*")
                 for it in raw_items:
                     title = it.get("title") or ""

@@ -6,9 +6,6 @@ from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
-# Block Kit divider 는 복사·붙여넣기 시 빠지는 경우가 많아, 본문에 ASCII 구분선을 넣음.
-_STATION_SECTION_RULE = "-" * 40
-
 
 def _station_emoji(station: str) -> str:
     s = (station or "").lower()
@@ -46,7 +43,7 @@ def _station_display_name(station: str) -> str:
 def _format_station_mrkdwn(station_key: str, items: List[Dict[str, str]]) -> str:
     icon = _station_emoji(station_key)
     name = _station_display_name(station_key)
-    lines = [_STATION_SECTION_RULE, "", f"{icon} *{name}*", ""]
+    lines = [f"{icon} *{name}*", ""]
     for it in items:
         title = it.get("title") or ""
         desc = (it.get("desc") or "").strip()
@@ -72,8 +69,7 @@ class SlackBot:
     def build_menu_blocks(self, menu_data: Dict[str, Any]) -> list:
         """
         메뉴 텍스트와 이미지 URL을 Slack Block Kit 형식으로 변환합니다.
-        ``stations``가 있으면 식당(스테이션)마다 ``divider`` + ``section``으로 나누고,
-        각 section 본문에는 복사·붙여넣기용 ASCII 구분선도 남겨 둡니다.
+        ``stations``가 있으면 식당(스테이션)마다 ``divider`` + ``section``으로 나눕니다.
         """
         menu_text = menu_data.get("menu_text", "Unable to load today's menu.")
         image_url = menu_data.get("image_url")
