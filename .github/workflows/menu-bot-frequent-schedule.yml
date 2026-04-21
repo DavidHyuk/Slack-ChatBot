@@ -9,7 +9,7 @@ on:
   # schedule 을 workflow_dispatch 앞에 두면 등록이 안정적인 경우가 있습니다.
   schedule:
     # 분 시 일 월 요일(UTC). */5 = 매시 :00,:05,...,:55 — 푸시 시각 기준 "5분 후"가 아님.
-    - cron: '40 * * * *'
+    - cron: '35 * * * *'
   workflow_dispatch: {}
 
 permissions:
