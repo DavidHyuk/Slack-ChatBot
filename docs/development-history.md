@@ -16,6 +16,10 @@ Each bump is one section, newest first.
 
 ---
 
+## 0.3.2 — 2026-04-21
+
+- Actions: explicit `workflow_dispatch: {}` and `schedule` before `workflow_dispatch` in `menu-bot-frequent-schedule.yml` (and `daily-menu.yml`) for reliable trigger parsing.
+
 ## 0.3.1 — 2026-04-21
 
 - `menu-bot-frequent-schedule.yml`: use `*/5 * * * *` (GitHub minimum schedule interval); document that sub-5-minute `cron` is not supported.

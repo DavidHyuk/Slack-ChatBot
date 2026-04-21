@@ -5,7 +5,7 @@ on:
     # America/Los_Angeles 오전 8시: PDT→15:xx UTC, PST→16:xx UTC. 두 번 돌린 뒤 main에서 해당 타임존 8시만 실제 전송.
     - cron: '5 15,16 * * *'
 
-  workflow_dispatch:
+  workflow_dispatch: {}
 
 permissions:
   contents: read
