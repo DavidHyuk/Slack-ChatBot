@@ -53,6 +53,9 @@ def _format_station_mrkdwn(station_key: str, items: List[Dict[str, str]]) -> str
             lines.append(f"  🥗 _Sides:_ {sides}")
         elif desc:
             lines.append(f"• *{title}* — {desc}")
+        elif sides:
+            lines.append(f"• *{title}*")
+            lines.append(f"  🥗 _Sides:_ {sides}")
         else:
             lines.append(f"• *{title}*")
     return "\n".join(lines).strip()

@@ -166,6 +166,9 @@ def get_todays_menu(url: str) -> Optional[Dict[str, Any]]:
                         lines.append(f"    🥗 _Sides:_ {sides}")
                     elif desc:
                         lines.append(f"  • *{title}* — {desc}")
+                    elif sides:
+                        lines.append(f"  • *{title}*")
+                        lines.append(f"    🥗 _Sides:_ {sides}")
                     else:
                         lines.append(f"  • *{title}*")
                 lines.append("")

@@ -10,9 +10,9 @@
 
 🍽️ *@Blue Plate*
   • *Cheese Ravioli with Tomato Basil Sauce* — cheese filled ravioli, tomato sauce, basil, parmesan cheese
-    🥗 _Sides:_ SIDES: herb roasted vegetables, mixed lettuce salad
+    🥗 _Sides:_ herb roasted vegetables, mixed lettuce salad
   • *Penne Pasta with Tomato Basil Sauce* — rigatoni pasta, tomato sauce, basil, olive oil
-    🥗 _Sides:_ SIDES: herb roasted vegetables, mixed lettuce salad
+    🥗 _Sides:_ herb roasted vegetables, mixed lettuce salad
 
 🍣 *@Sushi*
   • *Orange Blossom Roll* - Premium* — salmon, crab mix, avocado, sweet sauce, rice crackers, sushi rice, seaweed
@@ -22,12 +22,12 @@
 
 🌮 *@Spice*
   • *Beef Tostadas* — slow cooked beef, chili sauce, crispy tortillas, shredded lettuce, diced tomato, red onion, queso fresco, sour cream, salsa
-    🥗 _Sides:_ SIDES: taqueria rice
+    🥗 _Sides:_ taqueria rice
   • *Soy Vegetable Tostadas* — tempeh, roasted vegetables and beans, crispy tortillas, shredded lettuce, diced tomatoes, red onion, salsa
-    🥗 _Sides:_ SIDES: taqueria rice
+    🥗 _Sides:_ taqueria rice
 
 🌶️ *@Fire*
   • *Chili Shrimp* — onions, ginger, garlic, peppers, chili sauce, masala
-    🥗 _Sides:_ SIDES: vegetable pulao, dal
+    🥗 _Sides:_ vegetable pulao, dal
   • *Chili Paneer and Vegetables* — yogurt, sweet chili, masala spice, lemon, tandoori roti
-    🥗 _Sides:_ SIDES: vegetable pulao, onion, cucumber, coriander chutney, dal
+    🥗 _Sides:_ vegetable pulao, onion, cucumber, coriander chutney, dal
