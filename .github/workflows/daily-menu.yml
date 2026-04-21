@@ -33,6 +33,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           
+      # {date} in TARGET_URL is resolved with MENU_DATE_TZ (IANA), not the runner's UTC date.
       - name: 스크래핑 및 Slack 메시지 전송
         env:
           TARGET_URL: ${{ secrets.TARGET_URL }}

@@ -11,6 +11,33 @@ _WS_RE = re.compile(r"\s+")
 def _clean_text(s: str) -> str:
     return _WS_RE.sub(" ", (s or "").strip())
 
+
+def _station_emoji(station: str) -> str:
+    """스테이션 이름(예: @Soup)에 맞는 짧은 이모지. 매칭 없으면 기본값."""
+    s = (station or "").lower()
+    if "soup" in s:
+        return "🥣"
+    if "korean" in s:
+        return "🍚"
+    if "sushi" in s:
+        return "🍣"
+    if "blue plate" in s:
+        return "🍽️"
+    if "spice" in s:
+        return "🌮"
+    if "fire" in s:
+        return "🌶️"
+    if "grill" in s or "bbq" in s:
+        return "🔥"
+    if "salad" in s:
+        return "🥗"
+    if "dessert" in s or "sweet" in s:
+        return "🍰"
+    if "beverage" in s or "drink" in s:
+        return "🥤"
+    return "📍"
+
+
 def get_todays_menu(url: str) -> Optional[Dict[str, str]]:
     """
     대상 카페테리아 URL에서 오늘의 메뉴와 사진 URL을 스크래핑합니다.
@@ -38,7 +65,7 @@ def get_todays_menu(url: str) -> Optional[Dict[str, str]]:
         if not lunch_specials_container:
             logger.warning("메뉴 요소를 찾을 수 없습니다. (class='site-panel__daypart-wrapper')")
             return {
-                "menu_text": "오늘의 메뉴를 불러올 수 없습니다.",
+                "menu_text": "😢 Couldn't load today's menu.",
             }
             
         menu_items = []
@@ -89,7 +116,7 @@ def get_todays_menu(url: str) -> Optional[Dict[str, str]]:
 
             
         if not menu_items:
-            menu_text = "메뉴 항목이 없습니다."
+            menu_text = "📭 No menu items today."
         else:
             # 스테이션별로 묶어서 보기 좋게 출력
             station_order = []
@@ -103,18 +130,19 @@ def get_todays_menu(url: str) -> Optional[Dict[str, str]]:
 
             lines = []
             for st in station_order:
-                lines.append(f"*{st}*")
+                icon = _station_emoji(st)
+                lines.append(f"{icon} *{st}*")
                 for it in by_station[st]:
                     title = it.get("title") or ""
                     desc = it.get("desc") or ""
                     sides = it.get("sides") or ""
                     if desc and sides:
-                        lines.append(f"• *{title}* — {desc}")
-                        lines.append(f"  _Sides:_ {sides}")
+                        lines.append(f"  • *{title}* — {desc}")
+                        lines.append(f"    🥗 _Sides:_ {sides}")
                     elif desc:
-                        lines.append(f"• *{title}* — {desc}")
+                        lines.append(f"  • *{title}* — {desc}")
                     else:
-                        lines.append(f"• *{title}*")
+                        lines.append(f"  • *{title}*")
                 lines.append("")  # blank line between stations
 
             menu_text = "\n".join(lines).strip()

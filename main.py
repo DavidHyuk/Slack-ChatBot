@@ -26,7 +26,9 @@ def _menu_date_tz_name() -> str:
 def resolve_target_url(raw: str) -> str:
     """If TARGET_URL contains ``{date}``, substitute YYYY-MM-DD in MENU_DATE_TZ."""
     if "{date}" in raw:
-        d = datetime.now(ZoneInfo(_menu_date_tz_name())).date().isoformat()
+        tz_name = _menu_date_tz_name()
+        d = datetime.now(ZoneInfo(tz_name)).date().isoformat()
+        logger.info("Resolved {date} as %s (timezone=%s)", d, tz_name)
         return raw.replace("{date}", d)
     return raw
 

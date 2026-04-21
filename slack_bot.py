@@ -18,7 +18,7 @@ class SlackBot:
         """
         메뉴 텍스트와 이미지 URL을 Slack Block Kit 형식으로 변환합니다.
         """
-        menu_text = menu_data.get("menu_text", "오늘의 메뉴를 불러올 수 없습니다.")
+        menu_text = menu_data.get("menu_text", "Unable to load today's menu.")
         image_url = menu_data.get("image_url")
 
         blocks = [
@@ -26,7 +26,7 @@ class SlackBot:
                 "type": "header",
                 "text": {
                     "type": "plain_text",
-                    "text": "🍽️ 오늘의 카페테리아 메뉴 🍽️",
+                    "text": "🍽️ Today's cafeteria menu",
                     "emoji": True
                 }
             },
@@ -34,7 +34,7 @@ class SlackBot:
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": f"*오늘도 맛있는 점심 식사 하세요!*\n\n{menu_text}"
+                    "text": f"✨ *Enjoy your lunch today!*\n\n{menu_text}"
                 }
             }
         ]
@@ -45,7 +45,7 @@ class SlackBot:
                 {
                     "type": "image",
                     "image_url": image_url,
-                    "alt_text": "오늘의 메뉴 사진"
+                    "alt_text": "Today's menu photo"
                 }
             )
 
@@ -55,7 +55,7 @@ class SlackBot:
                 "elements": [
                     {
                         "type": "mrkdwn",
-                        "text": "봇에서 자동으로 전송하는 메시지입니다."
+                        "text": "🤖 Sent automatically by the bot."
                     }
                 ]
             }
@@ -84,7 +84,7 @@ class SlackBot:
         image_url을 Slack 서버가 가져오지 못하면 invalid_blocks가 나므로, 이미지 없이 한 번 더 시도합니다.
         """
         blocks = self.build_menu_blocks(menu_data)
-        fallback_text = "오늘의 카페테리아 메뉴가 도착했습니다!"
+        fallback_text = "Today's cafeteria menu is here!"
 
         try:
             response = self.client.chat_postMessage(
@@ -92,7 +92,7 @@ class SlackBot:
                 blocks=blocks,
                 text=fallback_text,
             )
-            logger.info(f"메시지 전송 성공: {response['ts']}")
+            logger.info(f"Message posted successfully: {response['ts']}")
             return True
         except SlackApiError as e:
             resp = e.response
@@ -105,7 +105,7 @@ class SlackBot:
             )
             if image_fail:
                 logger.warning(
-                    "Slack이 image_url에서 이미지를 받지 못했습니다. 이미지 블록 없이 다시 전송합니다."
+                    "Slack could not fetch image_url; retrying without the image block."
                 )
                 retry_blocks = self.build_menu_blocks({**menu_data, "image_url": None})
                 try:
@@ -114,13 +114,13 @@ class SlackBot:
                         blocks=retry_blocks,
                         text=fallback_text,
                     )
-                    logger.info(f"메시지 전송 성공(이미지 제외): {response['ts']}")
+                    logger.info(f"Message posted successfully (no image): {response['ts']}")
                     return True
                 except SlackApiError as e2:
-                    logger.error(f"Slack API 에러 발생: {e2.response.get('error')}")
+                    logger.error(f"Slack API error: {e2.response.get('error')}")
                     return False
 
-            logger.error(f"Slack API 에러 발생: {error_code}")
+            logger.error(f"Slack API error: {error_code}")
             return False
 
 if __name__ == "__main__":
