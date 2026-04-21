@@ -12,6 +12,20 @@ def _clean_text(s: str) -> str:
     return _WS_RE.sub(" ", (s or "").strip())
 
 
+_SIDES_HEADING = re.compile(r"^(?:SIDES?)\s*:\s*", re.IGNORECASE)
+
+
+def _strip_redundant_sides_heading(s: str) -> str:
+    """페이지 텍스트에 이미 붙은 SIDES:/SIDE: 라벨 제거 (_Sides:_ 와 중복 방지)."""
+    t = _clean_text(s)
+    while True:
+        n = _SIDES_HEADING.sub("", t, count=1)
+        if n == t:
+            break
+        t = _clean_text(n)
+    return t
+
+
 def _station_emoji(station: str) -> str:
     """스테이션 이름(예: @Soup)에 맞는 짧은 이모지. 매칭 없으면 기본값."""
     s = (station or "").lower()
@@ -96,7 +110,9 @@ def get_todays_menu(url: str) -> Optional[Dict[str, Any]]:
                 # 'SIDES:' 같은 부가 정보 영역이 있다면 조금 다듬기
                 sides_div = desc_div.find('div', class_='site-panel__daypart-item-sides')
                 if sides_div:
-                    sides_text = _clean_text(sides_div.get_text(separator=" ", strip=True))
+                    sides_text = _strip_redundant_sides_heading(
+                        sides_div.get_text(separator=" ", strip=True)
+                    )
                     sides_div.extract()
                     base_desc = _clean_text(desc_div.get_text(separator=" ", strip=True))
                     desc_text = base_desc
