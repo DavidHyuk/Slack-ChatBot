@@ -6,24 +6,6 @@ from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
-# Slack header 블록은 글꼴 크기를 바꿀 수 없어, 라틴 제목을 전각으로 두어 시각적으로 더 크게 보이게 함.
-def _fullwidth_basic_latin(s: str) -> str:
-    out: List[str] = []
-    for ch in s:
-        o = ord(ch)
-        if o == 0x20:
-            out.append("\u3000")
-        elif 0x21 <= o <= 0x7E:
-            out.append(chr(o - 0x21 + 0xFF01))
-        else:
-            out.append(ch)
-    return "".join(out)
-
-
-def _main_header_text() -> str:
-    title = _fullwidth_basic_latin("Today's cafeteria menu")
-    return f"🍽️ {title}"
-
 
 def _station_emoji(station: str) -> str:
     s = (station or "").lower()
@@ -98,7 +80,7 @@ class SlackBot:
                 "type": "header",
                 "text": {
                     "type": "plain_text",
-                    "text": _main_header_text(),
+                    "text": "🍽️ Today's cafeteria menu",
                     "emoji": True,
                 },
             },
