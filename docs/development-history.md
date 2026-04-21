@@ -16,6 +16,10 @@ Each bump is one section, newest first.
 
 ---
 
+## 0.3.1 — 2026-04-21
+
+- `menu-bot-frequent-schedule.yml`: use `*/5 * * * *` (GitHub minimum schedule interval); document that sub-5-minute `cron` is not supported.
+
 ## 0.3.0 — 2026-04-21
 
 - `TARGET_URL` supports `{date}` (default `MENU_DATE_TZ` / `America/Los_Angeles`) for Bon Appétit `/cafe/YYYY-MM-DD/` URLs.

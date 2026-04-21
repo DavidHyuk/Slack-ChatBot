@@ -1,13 +1,15 @@
 # 수동 실행은 항상 가능합니다.
-# 매 1분 자동 실행이 필요하면 아래 schedule 블록의 주석을 해제한 뒤 커밋하세요.
-# 테스트가 끝나면 schedule 부분을 다시 주석 처리하는 것을 권장합니다(Actions 실행·Slack 알림 과다 방지).
+# GitHub 정책: schedule 워크플로는 최소 5분 간격만 허용됩니다(* * * * * 매분은 동작하지 않음).
+#   https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions#onschedule
+# 아래 schedule 을 켠 뒤 커밋하면 최대 5분마다 실행됩니다. 끝나면 schedule 을 주석 처리하세요.
 
-name: Cafeteria menu bot (manual / optional every-minute cron)
+name: Cafeteria menu bot (manual / optional every-5-min cron)
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '* * * * *'
+  # 짧은 간격 테스트: GitHub 최소 5분 — 아래 두 줄 주석 해제 후 커밋
+  # schedule:
+  #   - cron: '*/5 * * * *'
 
 permissions:
   contents: read
