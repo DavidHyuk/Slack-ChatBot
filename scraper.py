@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import logging
-from typing import Dict, Optional
+from typing import Any, Dict, List, Optional
 import re
 
 logger = logging.getLogger(__name__)
@@ -38,9 +38,10 @@ def _station_emoji(station: str) -> str:
     return "📍"
 
 
-def get_todays_menu(url: str) -> Optional[Dict[str, str]]:
+def get_todays_menu(url: str) -> Optional[Dict[str, Any]]:
     """
     대상 카페테리아 URL에서 오늘의 메뉴와 사진 URL을 스크래핑합니다.
+    Slack 가시성용으로 ``stations``(식당/스테이션별 항목 리스트)를 포함할 수 있습니다.
     """
     try:
         response = requests.get(url, timeout=10)
@@ -66,6 +67,7 @@ def get_todays_menu(url: str) -> Optional[Dict[str, str]]:
             logger.warning("메뉴 요소를 찾을 수 없습니다. (class='site-panel__daypart-wrapper')")
             return {
                 "menu_text": "😢 Couldn't load today's menu.",
+                "stations": [],
             }
             
         menu_items = []
@@ -117,10 +119,11 @@ def get_todays_menu(url: str) -> Optional[Dict[str, str]]:
             
         if not menu_items:
             menu_text = "📭 No menu items today."
+            stations: List[Dict[str, Any]] = []
         else:
-            # 스테이션별로 묶어서 보기 좋게 출력
-            station_order = []
-            by_station = {}
+            # 스테이션(식당)별로 묶기 — 순서 유지
+            station_order: List[str] = []
+            by_station: Dict[str, List[Dict[str, str]]] = {}
             for it in menu_items:
                 st = it.get("station") or "Other"
                 if st not in by_station:
@@ -128,14 +131,20 @@ def get_todays_menu(url: str) -> Optional[Dict[str, str]]:
                     station_order.append(st)
                 by_station[st].append(it)
 
+            stations = []
             lines = []
             for st in station_order:
+                raw_items = by_station[st]
+                items_out: List[Dict[str, str]] = []
                 icon = _station_emoji(st)
                 lines.append(f"{icon} *{st}*")
-                for it in by_station[st]:
+                for it in raw_items:
                     title = it.get("title") or ""
                     desc = it.get("desc") or ""
                     sides = it.get("sides") or ""
+                    items_out.append(
+                        {"title": title, "desc": desc, "sides": sides}
+                    )
                     if desc and sides:
                         lines.append(f"  • *{title}* — {desc}")
                         lines.append(f"    🥗 _Sides:_ {sides}")
@@ -143,14 +152,16 @@ def get_todays_menu(url: str) -> Optional[Dict[str, str]]:
                         lines.append(f"  • *{title}* — {desc}")
                     else:
                         lines.append(f"  • *{title}*")
-                lines.append("")  # blank line between stations
+                lines.append("")
+                stations.append({"station": st, "items": items_out})
 
             menu_text = "\n".join(lines).strip()
-            
+
         # 해당 사이트는 목록에 직접 이미지 URL이 없음. Slack image 블록은 공개 HTTPS에서
         # Slack 서버가 직접 다운로드 가능한 URL만 허용되므로, 플레이스홀더 외부 URL은 넣지 않음.
         return {
             "menu_text": menu_text,
+            "stations": stations,
         }
         
     except requests.RequestException as e:
