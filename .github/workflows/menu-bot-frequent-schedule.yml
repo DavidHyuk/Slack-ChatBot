@@ -8,8 +8,8 @@ name: Cafeteria menu bot (manual / optional every-5-min cron)
 on:
   workflow_dispatch:
   # 짧은 간격 테스트: GitHub 최소 5분 — 아래 두 줄 주석 해제 후 커밋
-  # schedule:
-  #   - cron: '*/5 * * * *'
+  schedule:
+    - cron: '*/5 * * * *'
 
 permissions:
   contents: read
