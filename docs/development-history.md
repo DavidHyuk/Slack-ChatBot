@@ -16,6 +16,11 @@ Each bump is one section, newest first.
 
 ---
 
+## 0.2.0 — 2026-04-21
+
+- GitHub Actions: `daily-menu.yml` runs once per day by default (02:00 UTC); added `menu-bot-frequent-schedule.yml` for manual runs and optional every-minute `cron` (commented until enabled for testing).
+- Documented Actions setup and testing workflow notes in README.
+
 ## 0.1.0 — 2026-04-20
 
 - Initial project setup: Added `requirements.txt`, `.env.example`, and initialized development history.
