@@ -6,8 +6,8 @@ name: Cafeteria menu bot (manual / optional every-minute cron)
 
 on:
   workflow_dispatch:
-  # schedule:
-  #   - cron: '* * * * *'
+  schedule:
+    - cron: '* * * * *'
 
 permissions:
   contents: read
