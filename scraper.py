@@ -2,8 +2,14 @@ import requests
 from bs4 import BeautifulSoup
 import logging
 from typing import Dict, Optional
+import re
 
 logger = logging.getLogger(__name__)
+
+_WS_RE = re.compile(r"\s+")
+
+def _clean_text(s: str) -> str:
+    return _WS_RE.sub(" ", (s or "").strip())
 
 def get_todays_menu(url: str) -> Optional[Dict[str, str]]:
     """
@@ -48,11 +54,12 @@ def get_todays_menu(url: str) -> Optional[Dict[str, str]]:
             # 불필요한 span(아이콘 등) 제거 후 텍스트만 추출
             for span in title_btn.find_all('span'):
                 span.decompose()
-            title_text = title_btn.get_text(strip=True)
+            title_text = _clean_text(title_btn.get_text(" ", strip=True))
             
             # 메뉴 설명
             desc_div = item.find('div', class_='site-panel__daypart-item-description')
             desc_text = ""
+            sides_text = ""
             if desc_div:
                 # 불필요한 주석이나 빈 줄바꿈 등을 정리
                 for tag in desc_div.find_all(['br', 'hr']):
@@ -60,30 +67,57 @@ def get_todays_menu(url: str) -> Optional[Dict[str, str]]:
                 # 'SIDES:' 같은 부가 정보 영역이 있다면 조금 다듬기
                 sides_div = desc_div.find('div', class_='site-panel__daypart-item-sides')
                 if sides_div:
-                    sides_text = sides_div.get_text(separator=' ', strip=True)
+                    sides_text = _clean_text(sides_div.get_text(separator=" ", strip=True))
                     sides_div.extract()
-                    base_desc = desc_div.get_text(separator=' ', strip=True)
-                    desc_text = f"{base_desc} [{sides_text}]"
+                    base_desc = _clean_text(desc_div.get_text(separator=" ", strip=True))
+                    desc_text = base_desc
                 else:
-                    desc_text = desc_div.get_text(separator=' ', strip=True)
+                    desc_text = _clean_text(desc_div.get_text(separator=" ", strip=True))
             
             # 스테이션 이름 (예: @Korean, @Spice 등)
             station_div = item.find('div', class_='site-panel__daypart-item-station')
-            station_text = station_div.get_text(strip=True) if station_div else ""
-            
-            # 텍스트 조립
-            if desc_text:
-                menu_str = f"• *{title_text}* {station_text}\n  └ {desc_text}"
-            else:
-                menu_str = f"• *{title_text}* {station_text}"
-                
-            menu_items.append(menu_str)
+            station_text = _clean_text(station_div.get_text(" ", strip=True)) if station_div else ""
+
+            menu_items.append(
+                {
+                    "title": title_text,
+                    "station": station_text,
+                    "desc": desc_text,
+                    "sides": sides_text,
+                }
+            )
 
             
         if not menu_items:
             menu_text = "메뉴 항목이 없습니다."
         else:
-            menu_text = "\n\n".join(menu_items)
+            # 스테이션별로 묶어서 보기 좋게 출력
+            station_order = []
+            by_station = {}
+            for it in menu_items:
+                st = it.get("station") or "Other"
+                if st not in by_station:
+                    by_station[st] = []
+                    station_order.append(st)
+                by_station[st].append(it)
+
+            lines = []
+            for st in station_order:
+                lines.append(f"*{st}*")
+                for it in by_station[st]:
+                    title = it.get("title") or ""
+                    desc = it.get("desc") or ""
+                    sides = it.get("sides") or ""
+                    if desc and sides:
+                        lines.append(f"• *{title}* — {desc}")
+                        lines.append(f"  _Sides:_ {sides}")
+                    elif desc:
+                        lines.append(f"• *{title}* — {desc}")
+                    else:
+                        lines.append(f"• *{title}*")
+                lines.append("")  # blank line between stations
+
+            menu_text = "\n".join(lines).strip()
             
         # 해당 사이트는 목록에 직접 이미지 URL이 없음. Slack image 블록은 공개 HTTPS에서
         # Slack 서버가 직접 다운로드 가능한 URL만 허용되므로, 플레이스홀더 외부 URL은 넣지 않음.

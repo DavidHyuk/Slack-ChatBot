@@ -107,33 +107,6 @@ class SlackBot:
                 logger.warning(
                     "Slack이 image_url에서 이미지를 받지 못했습니다. 이미지 블록 없이 다시 전송합니다."
                 )
-                # #region agent log
-                import json
-                import time
-
-                try:
-                    with open(
-                        "/home/david/workspace/Slack-ChatBot/.cursor/debug-1bd0d9.log",
-                        "a",
-                        encoding="utf-8",
-                    ) as f:
-                        f.write(
-                            json.dumps(
-                                {
-                                    "sessionId": "1bd0d9",
-                                    "runId": "post-fix",
-                                    "hypothesisId": "IMG",
-                                    "location": "slack_bot.py:send_menu_message",
-                                    "message": "Retry without image block",
-                                    "data": {"error": error_code},
-                                    "timestamp": int(time.time() * 1000),
-                                }
-                            )
-                            + "\n"
-                        )
-                except OSError:
-                    pass
-                # #endregion
                 retry_blocks = self.build_menu_blocks({**menu_data, "image_url": None})
                 try:
                     response = self.client.chat_postMessage(
