@@ -1,6 +1,7 @@
 ---
 description: After code changes, suggest English git commit messages
-alwaysApply: true
+globs: "**/*"
+alwaysApply: false
 ---
 
 # Git commit message suggestions

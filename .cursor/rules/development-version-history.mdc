@@ -1,6 +1,7 @@
 ---
 description: Keep docs/development-history.md in sync when dev/project version bumps
-alwaysApply: true
+globs: "**/*"
+alwaysApply: false
 ---
 
 # Development version history
