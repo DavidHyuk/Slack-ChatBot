@@ -72,8 +72,8 @@ class SlackBot:
     def build_menu_blocks(self, menu_data: Dict[str, Any]) -> list:
         """
         메뉴 텍스트와 이미지 URL을 Slack Block Kit 형식으로 변환합니다.
-        ``stations``가 있으면 식당(스테이션)별 section으로 나누고,
-        각 블록 본문에 ASCII 구분선을 넣어 복사·붙여넣기 시에도 구분이 유지되게 합니다.
+        ``stations``가 있으면 식당(스테이션)마다 ``divider`` + ``section``으로 나누고,
+        각 section 본문에는 복사·붙여넣기용 ASCII 구분선도 남겨 둡니다.
         """
         menu_text = menu_data.get("menu_text", "Unable to load today's menu.")
         image_url = menu_data.get("image_url")
@@ -112,6 +112,7 @@ class SlackBot:
                 items = block.get("items") or []
                 if not items:
                     continue
+                blocks.append({"type": "divider"})
                 body = _format_station_mrkdwn(station_key, items)
                 blocks.append(
                     {
