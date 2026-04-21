@@ -1,13 +1,15 @@
 import os
 import sys
 import logging
+import json
+import time
 from dotenv import load_dotenv
 from scraper import get_todays_menu
 from slack_bot import SlackBot
 
 # 로깅 설정
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG, # DEBUG 레벨로 변경하여 HTML 확인
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
@@ -39,6 +41,14 @@ def main():
         
     logger.info(f"성공적으로 메뉴 정보를 가져왔습니다. 텍스트 길이: {len(menu_data.get('menu_text', ''))}")
     
+    # 디버깅을 위해 메뉴 텍스트를 파일로 저장
+    try:
+        with open("debug_menu_output.txt", "w", encoding="utf-8") as f:
+            f.write(menu_data.get('menu_text', ''))
+        logger.info("메뉴 텍스트를 debug_menu_output.txt 파일에 저장했습니다.")
+    except Exception as e:
+        logger.error(f"메뉴 텍스트 파일 저장 실패: {e}")
+        
     # Slack 전송
     logger.info(f"Slack 채널({slack_channel})로 메시지를 전송합니다...")
     bot = SlackBot(token=slack_token, channel_id=slack_channel)

@@ -1,0 +1,52 @@
+• *Black Bean* @Soup
+  └ black beans, onions, tomato, corn, spices, herbs
+
+• *Pork Soup* @Soup
+  └ slow cooked pork shoulder, potato, cabbage, onion, bok choy
+
+• *Andong Jjim-dak | Chicken Stir-fried in Soy Sauce* @Korean
+  └ chicken thighs, onion, mushroom, clear noodle
+
+• *White Rice | Mixed Grain Rice* @Korean
+
+• *Banchan* @Korean
+  └  [SIDES:
+																	bae-chu kimchi : cabbage kimchi, 																	kongnamul muchim : seasoned soybean sprouts, 																	oi tangtang-i : cucumber salad]
+
+• *Kongnamul Guk* @Korean
+
+• *Cheese Ravioli with Tomato Basil Sauce* @Blue Plate
+  └ cheese filled ravioli, tomato sauce, basil, parmesan cheese [SIDES:
+																	herb roasted vegetables, 																	mixed lettuce salad]
+
+• *Penne Pasta with Tomato Basil Sauce* @Blue Plate
+  └ rigatoni pasta, tomato sauce, basil, olive oil [SIDES:
+																	herb roasted vegetables, 																	mixed lettuce salad]
+
+• *Orange Blossom Roll* - Premium* @Sushi
+  └ salmon, crab mix, avocado, sweet sauce, rice crackers, sushi rice, seaweed
+
+• *Green Dragon - Premium* @Sushi
+  └ shrimp tempura, avocado, cucumber, sweet sauce sesame seeds, sushi rice, seaweed
+
+• *Crazy Roll* - Basic* @Sushi
+  └ tuna, salmon, white fish, tobiko, sushi rice, seaweed
+
+• *Shiitake Mushroom Roll - Basic* @Sushi
+  └ shiitake mushrooms, avocado, sesame seeds, sushi rice, seaweed
+
+• *Beef Tostadas* @Spice
+  └ slow cooked beef, chili sauce, crispy tortillas, shredded lettuce, diced tomato, red onion, queso fresco, sour cream, salsa [SIDES:
+																	taqueria rice, 																	cabbage salad]
+
+• *Soy Vegetable Tostadas* @Spice
+  └ soy chorizo, roasted vegetables and beans, crispy tortillas, shredded lettuce, diced tomatoes, red onion, salsa [SIDES:
+																	taqueria rice]
+
+• *Chili Shrimp* @Fire
+  └ onions, ginger, garlic, peppers, chili sauce, masala [SIDES:
+																	vegetable pulao, 																	dal]
+
+• *Chili Paneer and Vegetables* @Fire
+  └ yogurt, sweet chili, masala spice, lemon, tandoori roti [SIDES:
+																	vegetable pulao, 																	onion, cucumber, coriander chutney, 																	dal]
