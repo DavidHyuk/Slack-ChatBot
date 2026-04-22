@@ -15,8 +15,7 @@ from zoneinfo import ZoneInfo
 LA = ZoneInfo("America/Los_Angeles")
 # (label, UTC hour, minute) — daily-menu.yml / test 워크플로와 맞출 것
 SLOTS = (
-    ("daily-menu early (UTC 14:05)", 14, 5),
-    ("daily-menu winter slot (UTC 16:05)", 16, 5),
+    ("daily-menu prod (UTC 15:05, ~8am PDT / ~7am PST)", 15, 5),
     ("~10am PDT test workflow (UTC 17:05)", 17, 5),
 )
 
