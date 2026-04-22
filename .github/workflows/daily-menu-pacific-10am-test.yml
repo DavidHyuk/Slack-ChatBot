@@ -3,9 +3,10 @@
 name: Daily menu Slack test (~10am Pacific)
 
 on:
-  workflow_dispatch: {}
   schedule:
     - cron: '5 17 * * *'
+
+  workflow_dispatch: {}
 
 permissions:
   contents: read

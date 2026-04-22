@@ -11,7 +11,7 @@ on:
   # schedule:
   #   # 분 시 일 월 요일(UTC). */5 = 큐에 넣을 수 있는 5분 격자; 실제 러너 할당은 지연될 수 있음.
   #   - cron: '*/5 * * * *'
-  # workflow_dispatch: {}
+  workflow_dispatch: {}
 
 permissions:
   contents: read
