@@ -16,6 +16,10 @@ Each bump is one section, newest first.
 
 ---
 
+## 0.3.3 — 2026-04-21
+
+- Document GitHub `schedule` best-effort delays (runs can be tens of minutes apart despite `*/5` cron).
+
 ## 0.3.2 — 2026-04-21
 
 - Actions: explicit `workflow_dispatch: {}` and `schedule` before `workflow_dispatch` in `menu-bot-frequent-schedule.yml` (and `daily-menu.yml`) for reliable trigger parsing.

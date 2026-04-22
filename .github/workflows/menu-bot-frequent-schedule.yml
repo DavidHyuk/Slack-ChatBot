@@ -1,16 +1,17 @@
 # 수동 실행은 항상 가능합니다.
-# GitHub 정책: schedule 워크플로는 최소 5분 간격만 허용됩니다(* * * * * 매분은 동작하지 않음).
+# GitHub 정책: schedule 은 최소 5분 간격만 허용(* * * * * 매분 불가).
 #   https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions#onschedule
-# schedule 을 켠 채로 main 에 두면 UTC 기준 5분 격자마다 실행됩니다. 끝나면 schedule 블록을 주석 처리하세요.
+# 실행 시각은 "베스트 에포트" — 부하 시 수십 분~수시간 밀릴 수 있음(랜덤이 아니라 큐 지연).
+#   https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+# schedule 을 끄려면 아래 schedule 블록을 주석 처리하세요.
 
 name: Cafeteria menu bot (manual / optional every-5-min cron)
 
 on:
-  # schedule 을 workflow_dispatch 앞에 두면 등록이 안정적인 경우가 있습니다.
-  schedule:
-    # 분 시 일 월 요일(UTC). */5 = 매시 :00,:05,...,:55 — 푸시 시각 기준 "5분 후"가 아님.
-    - cron: '*/5 * * * *'
-  workflow_dispatch: {}
+  # schedule:
+  #   # 분 시 일 월 요일(UTC). */5 = 큐에 넣을 수 있는 5분 격자; 실제 러너 할당은 지연될 수 있음.
+  #   - cron: '*/5 * * * *'
+  # workflow_dispatch: {}
 
 permissions:
   contents: read
