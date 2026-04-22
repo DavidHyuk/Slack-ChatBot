@@ -2,10 +2,9 @@ name: Daily Cafeteria Menu SlackBot
 
 on:
   schedule:
-    # America/Los_Angeles 오전 8시: PDT→15:xx UTC, PST→16:xx UTC.
-    # 반드시 두 줄로 나눠야 github.event.schedule 로 슬롯을 구분할 수 있음(PDT 지연 시 9시에도 15슬롯만 전송).
+    # UTC 15:05 ≈ America/Los_Angeles 8:05(PDT) / 7:05(PST). 로컬 시각 검사 없음 — 실행되면 곧바로 Slack 전송.
+    # 겨울에도 로컬 8시에 맞추려면 `5 16 * * *` 등으로 바꾸세요(일광절약제와 트레이드오프).
     - cron: '5 15 * * *'
-    - cron: '5 16 * * *'
 
   workflow_dispatch: {}
 
@@ -41,10 +40,6 @@ jobs:
           TARGET_URL: ${{ secrets.TARGET_URL }}
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
-          GHA_SCHEDULE_CRON: ${{ github.event.schedule }}
-          ENFORCE_LOCAL_NOTIFY_WINDOW: "1"
-          MENU_NOTIFY_TZ: America/Los_Angeles
-          MENU_NOTIFY_HOUR: "8"
           MENU_DATE_TZ: America/Los_Angeles
         run: |
           python main.py
