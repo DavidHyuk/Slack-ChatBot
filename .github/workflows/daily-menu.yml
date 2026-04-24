@@ -4,7 +4,8 @@ on:
   schedule:
     # UTC 14:30 ≈ America/Los_Angeles 7:30 when on daylight time (PDT). 겨울(PST)에는 약 6:30 로컬.
     # 실험 결과 셋업 시간으로부터 1시간 16분 뒤 github action 동작함. 8시 45~46분쯤 동작 예정
-    - cron: '30 14 * * *'
+    # 1-5: Mon–Fri in UTC. 이 시각(14:30 UTC)은 LA에서도 같은 캘린더 날·요일(월~금)이므로 토/일(로컬)에는 실행되지 않음.
+    - cron: '30 14 * * 1-5'
 
   workflow_dispatch: {}
 

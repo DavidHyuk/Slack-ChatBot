@@ -16,6 +16,10 @@ Each bump is one section, newest first.
 
 ---
 
+## 0.3.4 — 2026-04-24
+
+- `daily-menu.yml`: `schedule` cron to Mon–Fri only (`1-5`); skips Sat/Sun in `America/Los_Angeles` at the same UTC slot (14:30 UTC aligns local weekday with UTC weekday for this time).
+
 ## 0.3.3 — 2026-04-21
 
 - Document GitHub `schedule` best-effort delays (runs can be tens of minutes apart despite `*/5` cron).
