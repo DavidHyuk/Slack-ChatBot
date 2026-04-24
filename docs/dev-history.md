@@ -16,6 +16,10 @@ Each bump is one section, newest first.
 
 ---
 
+## 0.3.6 — 2026-04-24
+
+- `daily-menu.yml`: `schedule` uses `timezone: "America/Los_Angeles"` with `cron` `30 7 * * 1-5` (weekday 07:30 local LA); replaces UTC-only `30 14 * * 1-5`.
+
 ## 0.3.5 — 2026-04-24
 
 - Consolidate version log: canonical file is `docs/dev-history.md`; `docs/development-history.md` removed. Update README link.

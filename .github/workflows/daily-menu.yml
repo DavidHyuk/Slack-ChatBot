@@ -2,10 +2,11 @@ name: Daily Cafeteria Menu SlackBot
 
 on:
   schedule:
-    # UTC 14:30 ≈ America/Los_Angeles 7:30 when on daylight time (PDT). 겨울(PST)에는 약 6:30 로컬.
-    # 실험 결과 셋업 시간으로부터 1시간 16분 뒤 github action 동작함. 8시 45~46분쯤 동작 예정
-    # 1-5: Mon–Fri in UTC. 이 시각(14:30 UTC)은 LA에서도 같은 캘린더 날·요일(월~금)이므로 토/일(로컬)에는 실행되지 않음.
-    - cron: '30 14 * * 1-5'
+    # `timezone` + cron: 월~금 07:30 America/Los_Angeles (IANA). 요일·시·분은 모두 LA 기준.
+    # 이전(UTC 14:30 고정)은 겨울엔 로컬 약 06:30에 가깝게 돌았음; 이제 연중 로컬 07:30에 맞춤.
+    # GitHub schedule은 best-effort 지연이 있을 수 있음. 실험상 액션 시작이 수십 분 늦을 수 있음.
+    - cron: '30 7 * * 1-5'
+      timezone: "America/Los_Angeles"
 
   workflow_dispatch: {}
 
