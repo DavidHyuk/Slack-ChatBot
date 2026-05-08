@@ -1,5 +1,6 @@
+import os
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 import logging
 from typing import Any, Dict, List, Optional
 import re
@@ -52,30 +53,62 @@ def _station_emoji(station: str) -> str:
     return "📍"
 
 
+def _daypart_section(soup: BeautifulSoup, daypart: str) -> Optional[Tag]:
+    """Bon Appétit daypart `<section id=\"breakfast|lunch|...\">` (see `data-url-key`)."""
+    key = (daypart or "lunch").strip().lower()
+    sec = soup.find("section", id=key)
+    if sec:
+        return sec
+    return soup.find("section", attrs={"data-url-key": key})
+
+
+def _active_daypart_tab_within(section: Optional[Tag]) -> Optional[Tag]:
+    """First visible tab panel under a daypart (`c-tab__content--active`)."""
+    if not section:
+        return None
+    panel = section.select_one(
+        "div.c-tab__content.c-tab__content--active.site-panel__daypart-tab-content"
+    )
+    if panel:
+        return panel
+    # 비활성 탭만 SSR에 남는 경우: 해당 daypart의 첫 daypart 탭 패널
+    return section.find(
+        "div",
+        class_=lambda c: c
+        and "c-tab__content" in c
+        and "site-panel__daypart-tab-content" in c,
+    )
+
+
+def _first_daypart_tab_globally(soup: BeautifulSoup) -> Optional[Tag]:
+    """이전 동작: 문서 전체에서 첫 `site-panel__daypart-tab-content` (보통 breakfast)."""
+    for tab_content in soup.find_all("div", class_="c-tab__content"):
+        if "site-panel__daypart-tab-content" in tab_content.get("class", []):
+            return tab_content
+    return None
+
+
 def get_todays_menu(url: str) -> Optional[Dict[str, Any]]:
     """
     대상 카페테리아 URL에서 오늘의 메뉴와 사진 URL을 스크래핑합니다.
     Slack 가시성용으로 ``stations``(식당/스테이션별 항목 리스트)를 포함할 수 있습니다.
+
+    Bon Appétit 계열: ``MENU_DAYPART``(기본 ``lunch``)에 맞는 ``<section id="lunch">`` 등의
+    활성 탭만 사용합니다. URL 조각 ``#lunch``는 HTTP 요청에 포함되지 않으므로 이 변수로 구분합니다.
     """
     try:
         response = requests.get(url, timeout=10)
         response.raise_for_status()
         
         soup = BeautifulSoup(response.text, 'html.parser')
-        
-        # 'Lunch Specials' 탭 컨텐츠를 담고 있는 컨테이너 찾기
-        lunch_specials_container = None
-        for tab_content in soup.find_all('div', class_='c-tab__content'):
-            # 내부의 'Lunch Specials'를 의미하는 특정 id나 구조인지 확인
-            # 주어진 HTML에서는 <button>에 Lunch Specials가 적혀 있고, aria-controls로 tab-content를 가리킴.
-            # 여기서는 편의상 모든 c-tab__content 내부에서 메뉴 아이템들을 수집합니다.
-            if 'site-panel__daypart-tab-content' in tab_content.get('class', []):
-                lunch_specials_container = tab_content
-                break
-                
-        # 만약 못 찾으면 첫 번째 daypart-wrapper를 사용
+
+        menu_daypart = os.environ.get("MENU_DAYPART", "lunch").strip().lower()
+        daypart_sec = _daypart_section(soup, menu_daypart)
+        lunch_specials_container = _active_daypart_tab_within(daypart_sec)
         if not lunch_specials_container:
-            lunch_specials_container = soup.find('div', class_='site-panel__daypart-wrapper')
+            lunch_specials_container = _first_daypart_tab_globally(soup)
+        if not lunch_specials_container:
+            lunch_specials_container = soup.find("div", class_="site-panel__daypart-wrapper")
 
         if not lunch_specials_container:
             logger.warning("메뉴 요소를 찾을 수 없습니다. (class='site-panel__daypart-wrapper')")
@@ -87,7 +120,7 @@ def get_todays_menu(url: str) -> Optional[Dict[str, Any]]:
         menu_items = []
         # 각 개별 메뉴 항목 찾기
         item_divs = lunch_specials_container.find_all('div', class_='site-panel__daypart-item-container')
-        
+
         for item in item_divs:
             # 메뉴 제목
             title_btn = item.find('button', class_='site-panel__daypart-item-title')

@@ -16,6 +16,15 @@ Each bump is one section, newest first.
 
 ---
 
+## 0.3.8 — 2026-05-08
+
+- `scraper.py`: scrape `MENU_DAYPART` (default `lunch`) inside `<section id="lunch">` active tab; fixes wrong menu when the first global tab was breakfast (`#lunch` URL hash is not sent to the server).
+- `.env.example`: document `MENU_DAYPART`.
+
+## 0.3.7 — 2026-05-08
+
+- `scraper.py`: temporary NDJSON debug logging (session `3a7e89`); superseded by 0.3.8 fix verification, instrumentation removed.
+
 ## 0.3.6 — 2026-04-24
 
 - `daily-menu.yml`: `schedule` uses `timezone: "America/Los_Angeles"` with `cron` `30 7 * * 1-5` (weekday 07:30 local LA); replaces UTC-only `30 14 * * 1-5`.
