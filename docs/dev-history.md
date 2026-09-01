@@ -16,6 +16,11 @@ Each bump is one section, newest first.
 
 ---
 
+## 0.3.9 — 2026-09-01
+
+- `keepalive.yml` removed: its action (`gautamkrishnar/keepalive-workflow`) was disabled by GitHub Staff for a ToS violation, breaking every scheduled run (`Error: Repository access blocked`).
+- `daily-menu.yml`: added a `keepalive` job (`liskin/gh-workflow-keepalive@v1`, `if: github.event_name == 'schedule'`) that re-enables the workflow via the API on each scheduled run instead of a separate dummy-commit workflow.
+
 ## 0.3.8 — 2026-05-08
 
 - `scraper.py`: scrape `MENU_DAYPART` (default `lunch`) inside `<section id="lunch">` active tab; fixes wrong menu when the first global tab was breakfast (`#lunch` URL hash is not sent to the server).

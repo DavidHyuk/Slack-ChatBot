@@ -18,6 +18,16 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Scheduled workflows are auto-disabled by GitHub after 60 days without activity.
+  # This re-enables itself via the API on each scheduled run to reset that clock.
+  keepalive:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - uses: liskin/gh-workflow-keepalive@v1
+
   send-menu-to-slack:
     runs-on: ubuntu-latest
 
