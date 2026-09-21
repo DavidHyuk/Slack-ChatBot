@@ -16,6 +16,10 @@ Each bump is one section, newest first.
 
 ---
 
+## 0.3.10 — 2026-09-21
+
+- `daily-menu.yml`: `schedule` cron `30 7` → `7 8` (`timezone: America/Los_Angeles` 유지). 2026-08-26부터 GitHub 스케줄러 큐 지연이 3~5시간으로 악화돼 발송이 로컬 10:45~12:30에 이뤄졌음(8월 중순엔 23~39분 지연). 혼잡 슬롯(`:00`/`:30`)을 피한 `:07`로 옮기고 명목 시각을 08:07로 올려 목표 창(로컬 08:00~09:00) 안에서 ~53분 지연 여유 확보.
+
 ## 0.3.9 — 2026-09-01
 
 - `keepalive.yml` removed: its action (`gautamkrishnar/keepalive-workflow`) was disabled by GitHub Staff for a ToS violation, breaking every scheduled run (`Error: Repository access blocked`).

@@ -2,10 +2,12 @@ name: Daily Cafeteria Menu SlackBot
 
 on:
   schedule:
-    # `timezone` + cron: 월~금 07:30 America/Los_Angeles (IANA). 요일·시·분은 모두 LA 기준.
-    # 이전(UTC 14:30 고정)은 겨울엔 로컬 약 06:30에 가깝게 돌았음; 이제 연중 로컬 07:30에 맞춤.
-    # GitHub schedule은 best-effort 지연이 있을 수 있음. 실험상 액션 시작이 수십 분 늦을 수 있음.
-    - cron: '30 7 * * 1-5'
+    # `timezone` + cron: 월~금 08:07 America/Los_Angeles (IANA). 요일·시·분은 모두 LA 기준.
+    # 목표 도착 창은 로컬 08:00~09:00. 08:07을 명목 시각으로 두어 지연 여유를 ~53분 확보.
+    # GitHub schedule은 best-effort라 부하가 크면 밀림. 문서 권고대로 정시(:00)·반시(:30)
+    # 같은 혼잡 슬롯을 피해 :07로 잡음. 이전 07:30(=14:30 UTC)은 2026-09 내내 3~5시간
+    # 밀려서 로컬 10:45~12:30에 발송됐음.
+    - cron: '7 8 * * 1-5'
       timezone: "America/Los_Angeles"
 
   workflow_dispatch: {}
