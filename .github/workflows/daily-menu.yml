@@ -1,15 +1,9 @@
 name: Daily Cafeteria Menu SlackBot
 
 on:
-  schedule:
-    # `timezone` + cron: 월~금 08:07 America/Los_Angeles (IANA). 요일·시·분은 모두 LA 기준.
-    # 목표 도착 창은 로컬 08:00~09:00. 08:07을 명목 시각으로 두어 지연 여유를 ~53분 확보.
-    # GitHub schedule은 best-effort라 부하가 크면 밀림. 문서 권고대로 정시(:00)·반시(:30)
-    # 같은 혼잡 슬롯을 피해 :07로 잡음. 이전 07:30(=14:30 UTC)은 2026-09 내내 3~5시간
-    # 밀려서 로컬 10:45~12:30에 발송됐음.
-    - cron: '7 8 * * 1-5'
-      timezone: "America/Los_Angeles"
-
+  # Scheduling moved to a local cron job on the team desktop (see docs/dev-history.md,
+  # 0.3.11) because GitHub's best-effort scheduler kept slipping 3-5 hours behind
+  # America/Los_Angeles 08:07. This workflow is now manual-trigger only.
   workflow_dispatch: {}
 
 permissions:
@@ -20,16 +14,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Scheduled workflows are auto-disabled by GitHub after 60 days without activity.
-  # This re-enables itself via the API on each scheduled run to reset that clock.
-  keepalive:
-    if: github.event_name == 'schedule'
-    runs-on: ubuntu-latest
-    permissions:
-      actions: write
-    steps:
-      - uses: liskin/gh-workflow-keepalive@v1
-
   send-menu-to-slack:
     runs-on: ubuntu-latest
 

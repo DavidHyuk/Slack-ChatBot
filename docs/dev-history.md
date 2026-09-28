@@ -16,6 +16,13 @@ Each bump is one section, newest first.
 
 ---
 
+## 0.3.11 — 2026-09-28
+
+- Scheduling moved off GitHub Actions to a local Linux cron job on the team desktop: `daily-menu.yml`'s `schedule` trigger (and the now-unneeded `keepalive` job) removed, leaving `workflow_dispatch` only. GitHub's scheduler kept slipping 3-5 hours behind despite the 0.3.10 `:07` slot fix, so alerts were still landing at 11am-12pm local instead of the 08:00-09:00 target window.
+- `run_main.sh` fixed: `uv run python main.py` failed with `ModuleNotFoundError` (no project deps installed); now `uv run --with-requirements requirements.txt python main.py`, `cd`s to its own directory first so cron's CWD doesn't matter.
+- Desktop crontab: `7 8 * * 1-5 run_main.sh >> logs/cron.log 2>&1` (desktop timezone is already `America/Los_Angeles`, matching `MENU_DATE_TZ`). `logs/` gitignored.
+- README: replaced the GitHub Actions scheduling section with local-cron setup instructions.
+
 ## 0.3.10 — 2026-09-21
 
 - `daily-menu.yml`: `schedule` cron `30 7` → `7 8` (`timezone: America/Los_Angeles` 유지). 2026-08-26부터 GitHub 스케줄러 큐 지연이 3~5시간으로 악화돼 발송이 로컬 10:45~12:30에 이뤄졌음(8월 중순엔 23~39분 지연). 혼잡 슬롯(`:00`/`:30`)을 피한 `:07`로 옮기고 명목 시각을 08:07로 올려 목표 창(로컬 08:00~09:00) 안에서 ~53분 지연 여유 확보.
