@@ -60,9 +60,9 @@ Slack 봇을 사용하려면 먼저 Slack App을 생성하고 토큰을 발급�
 GitHub Actions의 `schedule` 트리거는 best-effort라 부하가 크면 몇 시간씩 밀리는 문제가 반복돼(`docs/dev-history.md` 0.3.10, 0.3.11 참고), 매일 자동 발송은 **팀 데스크탑의 Linux cron**으로 옮겼습니다.
 
 1. `.env.example`을 복사해 `.env`를 만들고 `SLACK_BOT_TOKEN`, `SLACK_CHANNEL_ID`, `TARGET_URL`을 채웁니다.
-2. `crontab -e`로 아래 줄을 등록합니다 (데스크탑 타임존이 `America/Los_Angeles`라 로컬 시각 08:07 = 목표 도착 창 08:00~09:00):
+2. `crontab -e`로 아래 줄을 등록합니다 (데스크탑 타임존이 `America/Los_Angeles`라 로컬 시각 그대로 적용):
    ```cron
-   7 8 * * 1-5 /path/to/Cafeteria-Slack-Bot/run_main.sh >> /path/to/Cafeteria-Slack-Bot/logs/cron.log 2>&1
+   0 9 * * 1-5 /path/to/Cafeteria-Slack-Bot/run_main.sh >> /path/to/Cafeteria-Slack-Bot/logs/cron.log 2>&1
    ```
 3. `run_main.sh`는 `uv run --with-requirements requirements.txt python main.py`로 의존성을 캐시된 환경에 설치하고 실행합니다.
 4. `daily-menu.yml`은 이제 `workflow_dispatch`만 남아 있는 수동 실행/백업용입니다. GitHub Secrets(`SLACK_BOT_TOKEN`, `SLACK_CHANNEL_ID`, `TARGET_URL`)는 Actions 탭에서 필요할 때 그대로 사용할 수 있습니다.

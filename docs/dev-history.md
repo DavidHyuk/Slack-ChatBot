@@ -16,6 +16,10 @@ Each bump is one section, newest first.
 
 ---
 
+## 0.3.12 — 2026-09-28
+
+- Desktop crontab time changed `7 8 * * 1-5` → `0 9 * * 1-5` per user request (desktop is reliably on by 08:09 local, wants the alert at 09:00 instead of ~08:07). README updated to match.
+
 ## 0.3.11 — 2026-09-28
 
 - Scheduling moved off GitHub Actions to a local Linux cron job on the team desktop: `daily-menu.yml`'s `schedule` trigger (and the now-unneeded `keepalive` job) removed, leaving `workflow_dispatch` only. GitHub's scheduler kept slipping 3-5 hours behind despite the 0.3.10 `:07` slot fix, so alerts were still landing at 11am-12pm local instead of the 08:00-09:00 target window.
