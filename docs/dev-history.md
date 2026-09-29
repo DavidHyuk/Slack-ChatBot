@@ -16,6 +16,10 @@ Each bump is one section, newest first.
 
 ---
 
+## 0.3.13 — 2026-09-29
+
+- `run_main.sh`: fix silent no-op at the 09:00 cron slot — cron's default `PATH` (typically `/usr/bin:/bin`) doesn't include `~/.local/bin`, where `uv` is installed, so the job failed with `uv: command not found` and only ever showed up in `logs/cron.log`, not Slack. Script now prepends `$HOME/.local/bin` to `PATH` before invoking `uv`. Verified by running under `env -i PATH=/usr/bin:/bin` (cron-equivalent) and confirming a real Slack post.
+
 ## 0.3.12 — 2026-09-28
 
 - Desktop crontab time changed `7 8 * * 1-5` → `0 9 * * 1-5` per user request (desktop is reliably on by 08:09 local, wants the alert at 09:00 instead of ~08:07). README updated to match.
